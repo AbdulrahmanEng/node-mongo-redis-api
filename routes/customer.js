@@ -12,7 +12,7 @@ module.exports = function(app) {
                     info: 'error during customer create',
                     error: err
                 });
-            };
+            }
             res.json({
                 info: 'customer created successfully'
             });
@@ -27,7 +27,7 @@ module.exports = function(app) {
                     info: 'error during find customers',
                     error: err
                 });
-            };
+            }
             res.json({
                 info: 'customers found successfully',
                 data: customers
@@ -43,7 +43,7 @@ module.exports = function(app) {
                     info: 'error during find customer',
                     error: err
                 });
-            };
+            }
             if (customer) {
                 res.json({
                     info: 'customer found successfully',
@@ -66,7 +66,7 @@ module.exports = function(app) {
                     info: 'error during find customer',
                     error: err
                 });
-            };
+            }
             if (customer) {
                 _.merge(customer, req.body);
                 customer.save(function(err) {
@@ -75,7 +75,7 @@ module.exports = function(app) {
                             info: 'error during customer update',
                             error: err
                         });
-                    };
+                    }
                     res.json({
                         info: 'customer updated successfully'
                     });
@@ -93,12 +93,10 @@ module.exports = function(app) {
                     info: 'error during remove customer',
                     error: err
                 });
-            };
+            }
             res.json({
                 info: 'customer removed successfully'
             });
         });
     });
-
-
 };

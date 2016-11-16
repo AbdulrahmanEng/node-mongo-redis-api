@@ -12,6 +12,8 @@ $ npm install
 $ forever start customer_server.js && forever start staff_server.js
 ```
 
+The Mongo and Redis servers have to be running before the application starts.
+
 ```
 $ node company_server.js
 ```

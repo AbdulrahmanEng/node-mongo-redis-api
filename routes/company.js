@@ -5,6 +5,8 @@ const r = require('request').defaults({
 });
 
 const async = require('async');
+const redis = require('redis');
+const client = redis.createClient(6379, '0.0.0.0');
 
 module.exports = function(app) {
     // GET company staff and customer data
@@ -23,27 +25,39 @@ module.exports = function(app) {
                         }
                         if (!error && response.statusCode === 200) {
                             callback(null, body);
-                        }
-                        else {
+                        } else {
                             callback(response.statusCode);
                         }
                     });
                 },
                 staff: (callback) => {
-                    r({
-                        uri: 'https://emerald-forest-031116-eyjafjallajokullm89.c9users.io:8081/staff'
-                    }, (error, response, body) => {
-                        if (error) {
-                            callback({
-                                service: 'staff',
-                                error: error
+                    client.get('https://emerald-forest-031116-eyjafjallajokullm89.c9users.io:8081/staff', (error, staff) => {
+                        if (error) throw error;
+                        if (staff) {
+                            callback(null, JSON.parse(staff));
+                        } else {
+                            r({
+                                uri: 'https://emerald-forest-031116-eyjafjallajokullm89.c9users.io:8081/staff'
+                            }, (error, response, body) => {
+                                if (error) {
+                                    callback({
+                                        service: 'staff',
+                                        error: error
+                                    });
+                                }
+                                if (!error && response.statusCode === 200) {
+                                    callback(null, body);
+					// Stores staff data in Redis for next request to /company endpoint
+                                    //client.set('https://emerald-forest-031116-eyjafjallajokullm89.c9users.io:8081/staff', JSON.stringify(body.data), (error) => {
+// Sets expiration for staff data cache to 10 seconds
+					    client.setex('https://emerald-forest-031116-eyjafjallajokullm89.c9users.io:8081/staff', 10, JSON.stringify(body.data), (error) => {
+                                        if (error) throw error;
+                                    });
+                                } else {
+                                    callback(response.statusCode);
+                                }
                             });
-                        }
-                        if (!error && response.statusCode === 200) {
-                            callback(null, body);
-                        }
-                        else {
-                            callback(response.statusCode);
+
                         }
                     });
                 }
@@ -55,6 +69,8 @@ module.exports = function(app) {
                 });
             });
     });
-    
-    app.get('/ping', (req, res) => res.json({pong: Date.now()}));
+
+    app.get('/ping', (req, res) => res.json({
+        pong: Date.now()
+    }));
 };

@@ -29,12 +29,12 @@ module.exports = function(app) {
                 });
             }
             
-            // setTimeout(()=>{
+            setTimeout(()=>{
             res.json({
                 info: 'staff found successfully',
                 data: staff
             });  
-            // }, 5000);
+            }, 3000);
         });
     });
 

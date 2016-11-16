@@ -3,7 +3,7 @@ var customer = require('../models/customer.js');
 
 module.exports = function(app) {
 
-    /* Create */
+    /* CREATE staff member */
     app.post('/customer', function(req, res) {
         var newcustomer = new customer(req.body);
         newcustomer.save(function(err) {
@@ -19,7 +19,7 @@ module.exports = function(app) {
         });
     });
 
-    /* Read */
+    /* GET all staff */
     app.get('/customer', function(req, res) {
         customer.find(function(err, customers) {
             if (err) {
@@ -34,7 +34,8 @@ module.exports = function(app) {
             });
         });
     });
-
+    
+    /* GET individual staff member */
     app.get('/customer/:id', function(req, res) {
         // findById takes MongoDB document id value
         customer.findById(req.params.id, function(err, customer) {
@@ -58,7 +59,7 @@ module.exports = function(app) {
         });
     });
 
-    /* Update */
+    /* UPDATE staff member */
     app.put('/customer/:id', function(req, res) {
         customer.findById(req.params.id, function(err, customer) {
             if (err) {
@@ -85,7 +86,7 @@ module.exports = function(app) {
         });
     });
 
-    /* Delete */
+    /* DELETE staff member */
     app.delete('/customer/:id', function(req, res) {
         customer.findByIdAndRemove(req.params.id, function(err) {
             if (err) {
@@ -99,4 +100,6 @@ module.exports = function(app) {
             });
         });
     });
+    
+    app.get('/ping', (req, res) => res.json({pong: Date.now()}));
 };
